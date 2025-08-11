@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Canva Interactive Game Prompt Generator – VN/EN</title>
+  <style>
+    :root{
+      --bg: #f9fbff;
+      --card:#ffffff;
+      --primary:#2b7de9; /* sky blue */
+      --accent:#f7c948;  /* warm yellow */
+      --text:#203040;
+      --muted:#6b7a90;
+      --ring:#9ec4ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,var(--bg),#fff);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+    }
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+    .logo{
+      width:44px;height:44px;border-radius:12px;
+      background: radial-gradient(circle at 30% 30%, var(--accent), #ffeaa7);
+      box-shadow: 0 6px 18px rgba(247,201,72,.35), inset 0 0 0 2px rgba(255,255,255,.6);
+      display:grid;place-items:center;font-weight:800;color:#7b5600
+    }
+    h1{font-size: clamp(1.4rem, 1rem + 1.5vw, 2rem);margin:0}
+    .subtitle{color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:18px}
+    @media (min-width: 900px){
+      .grid{grid-template-columns: 1.1fr 0.9fr}
+    }
+
+    .card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(43,125,233,.08), 0 2px 6px rgba(32,48,64,.06);}
+    .card h2{margin:0 0 8px 0;font-size:1.05rem}
+    .help{font-size:.9rem;color:var(--muted)}
+
+    label{font-weight:600;display:block;margin-top:12px;margin-bottom:6px}
+    input[type="text"], textarea, select{
+      width:100%;padding:12px 14px;border:1.5px solid #e6eefc;border-radius:12px;outline:none;background:#fbfdff;
+      transition:border .15s, box-shadow .15s;
+    }
+    textarea{min-height:84px;resize:vertical}
+    input:focus, textarea:focus, select:focus{border-color:var(--primary); box-shadow:0 0 0 4px var(--ring)}
+
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row > *{flex:1}
+
+    .btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn.primary{background:var(--primary);color:#fff;box-shadow:0 8px 20px rgba(43,125,233,.28)}
+    .btn.ghost{background:#eef5ff;color:#174ea6}
+    .btn.accent{background:var(--accent);color:#4d3b00}
+    .btn:active{transform:translateY(1px)}
+
+    .outputs{display:grid;grid-template-columns:1fr;gap:14px}
+    @media (min-width: 800px){.outputs{grid-template-columns:1fr 1fr}}
+
+    .outbox{position:relative}
+    .copy{
+      position:absolute;right:10px;top:10px;display:flex;gap:8px
+    }
+
+    .badge{display:inline-flex;align-items:center;gap:8px;background:#eef7ff;color:#174ea6;padding:6px 10px;border-radius:999px;font-size:.85rem;font-weight:700}
+    footer{margin-top:24px;color:var(--muted);font-size:.9rem}
+    .tiny{font-size:.86rem;color:#5b6a82}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">★</div>
+      <div>
+        <h1>Canva Interactive Game – Prompt Generator <span class="badge">VN/EN</span></h1>
+        <div class="subtitle">Nhập ý tưởng ➝ Tạo Prompt tự động ➝ Sao chép sang Canva (Code for Me). | Enter your ideas ➝ Auto-generate prompt ➝ Copy to Canva.</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Inputs -->
+      <section class="card" id="inputs">
+        <h2>1) Thông tin trò chơi · Game info</h2>
+        <div class="help">Điền ngắn gọn, rõ ý. Write concise, clear notes.</div>
+
+        <label for="goal">Nội dung / Mục tiêu · Topic / Learning goals</label>
+        <textarea id="goal" placeholder="VD/eg: Ôn tập từ vựng & ngữ pháp Unit 1 – Friends Global 11; nhận biết collocations, phân loại từ loại."></textarea>
+
+        <label for="audience">Đối tượng / Môn học · Audience / Subject</label>
+        <textarea id="audience" placeholder="VD/eg: Học sinh lớp 11, môn Tiếng Anh tại Việt Nam."></textarea>
+
+        <label for="tasks">Nhiệm vụ / Số câu / Dạng câu · Tasks / Item count / Formats</label>
+        <textarea id="tasks" placeholder="VD/eg: Trắc nghiệm 10 câu; kéo thả ghép 6 cặp; 2 nhiệm vụ sắp xếp thứ tự."></textarea>
+
+        <div class="row">
+          <div>
+            <label for="style">Phong cách & màu sắc · Style & colors</label>
+            <input id="style" type="text" placeholder="Đơn giản, thân thiện; màu vàng & xanh da trời · simple, kid-friendly; yellow & sky blue" />
+          </div>
+          <div>
+            <label for="extras">Tính năng thêm · Extras</label>
+            <input id="extras" type="text" placeholder="Thanh tiến độ, điểm số, hiệu ứng đúng/sai, trang chào mừng…" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px">
+          <button class="btn primary" onclick="generate()">Tạo Prompt · Generate</button>
+          <button class="btn ghost" onclick="clearAll()">Xóa nội dung · Clear</button>
+        </div>
+
+        <hr style="margin:18px 0; border:none; height:1px; background:#ecf2ff"/>
+        <h2>2) Trợ lý gợi ý tự động · Auto-suggestion assistant</h2>
+        <div class="help">Gõ 1 câu mô tả ngắn, hệ thống sẽ đề xuất & điền vào các ô trên. Type a short idea and let the assistant fill the fields.</div>
+        <textarea id="lazy" placeholder="VD/eg: Ôn Unit 1 cho lớp 11, trò kéo thả + trắc nghiệm, 12 câu."></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="btn accent" onclick="autosuggest()">Phân tích & điền · Analyze & Fill</button>
+        </div>
+      </section>
+
+      <!-- Outputs -->
+      <section class="card" id="outputs">
+        <h2>3) Prompt hoàn chỉnh · Final prompt</h2>
+        <div class="help">Sao chép và dán vào Canva (Code for Me). Copy to Canva.</div>
+
+        <div class="outputs">
+          <div class="outbox">
+            <div class="copy">
+              <button class="btn ghost" onclick="copyText('outVN')">Sao chép · Copy</button>
+            </div>
+            <label><strong>VN – Prompt tiếng Việt</strong></label>
+            <textarea id="outVN" placeholder="Prompt tiếng Việt sẽ xuất hiện ở đây…"></textarea>
+          </div>
+
+          <div class="outbox">
+            <div class="copy">
+              <button class="btn ghost" onclick="copyText('outEN')">Copy</button>
+            </div>
+            <label><strong>EN – Prompt in English</strong></label>
+            <textarea id="outEN" placeholder="English prompt will appear here…"></textarea>
+          </div>
+        </div>
+
+        <div class="tiny" style="margin-top:10px">
+          ⚠️ Gợi ý: Nếu Canva chưa xử lý hết tính năng (điểm số, tiến độ…), hãy tạo bản đầu tiên rồi nhập yêu cầu bổ sung ở lần chỉnh tiếp theo. | Tip: If Canva misses extras (scoring, progress…), generate once, then add a short follow-up prompt.
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Made for teachers ✨ – Bright kid-friendly theme (yellow & sky blue). No external libraries. Works offline.
+    </footer>
+  </div>
+
+  <script>
+    // Helpers
+    const el = id => document.getElementById(id);
+
+    function sanitize(s){
+      return (s||"").trim();
+    }
+
+    function generate(){
+      const goal = sanitize(el('goal').value);
+      const audience = sanitize(el('audience').value);
+      const tasks = sanitize(el('tasks').value);
+      const style = sanitize(el('style').value) || 'Đơn giản, gọn gàng, dễ thao tác; màu vàng & xanh da trời';
+      const extras = sanitize(el('extras').value) || 'Triển khai hội thoại từng bước; thanh tiến độ; đếm câu đúng; tổng điểm cuối; hiệu ứng đúng/sai';
+
+      if(!goal || !audience || !tasks){
+        alert('Vui lòng điền ít nhất 3 ô: Mục tiêu, Đối tượng, Nhiệm vụ. / Please fill Goal, Audience, Tasks.');
+        return;
+      }
+
+      const vn = `Tạo một trò chơi tương tác về ${goal}.
+Mục tiêu: Giúp người chơi đạt được ${goal.replace(/(^|;|,)/g,'$1 ').trim()}.
+Đối tượng: ${audience}.
+Hình thức: ${tasks}.
+Phong cách: ${style}.
+Triển khai hội thoại từng bước: 1) Lời chào + giới thiệu luật chơi; 2) Câu hỏi xuất hiện lần lượt theo vòng; 3) Tổng kết điểm + lời chúc mừng.
+Hiệu ứng: Đúng → đổi màu, âm “chime/pop”, pháo giấy; Sai → lắc nhẹ, âm “boing/buzz”, lời khích lệ.
+Điều hướng: Nút “Tiếp theo” sau mỗi câu; có thanh tiến độ, bộ đếm câu đúng, hệ thống tính điểm tổng kết.
+Ghi chú thêm: ${extras}.`;
+
+      const en = `Create an interactive game about ${goal}.
+Goal: Help players master ${goal}.
+Audience: ${audience}.
+Format: ${tasks}.
+Style: ${style}.
+Step-by-step dialogue flow: (1) Warm greeting + rules; (2) Questions appear round by round; (3) Score summary + congratulations.
+Effects: Correct → color change, gentle "chime/pop", confetti; Incorrect → slight shake, "boing/buzz", encouraging retry.
+Navigation: "Next" button after each question, progress bar, correct-answer counter, final scoreboard.
+Extras: ${extras}.`;
+
+      el('outVN').value = vn;
+      el('outEN').value = en;
+      persist();
+    }
+
+    function copyText(id){
+      const text = el(id).value;
+      if(!text){ alert('Không có nội dung để sao chép / Nothing to copy'); return; }
+      navigator.clipboard.writeText(text).then(()=>{
+        const btns = document.querySelectorAll('.copy .btn');
+        btns.forEach(b=> b.textContent = (id==='outVN' ? 'Đã sao chép!' : 'Copied!'));
+        setTimeout(()=>btns.forEach(b=> b.textContent = (b.textContent.includes('Đã')?'Sao chép · Copy':'Copy')), 1200);
+      });
+    }
+
+    function clearAll(){
+      ['goal','audience','tasks','style','extras','lazy','outVN','outEN'].forEach(i=> el(i).value='');
+      localStorage.removeItem('canvaGen');
+    }
+
+    function autosuggest(){
+      const raw = sanitize(el('lazy').value).toLowerCase();
+      if(!raw){ alert('Nhập ý tưởng ngắn để gợi ý tự động. / Enter a short idea.'); return; }
+
+      // Heuristic parsing – lightweight, no AI calls
+      let goal=''; let audience=''; let tasks='';
+
+      // Audience & subject heuristics
+      if(raw.match(/lớp\s*1[0-2]|grade\s*(10|11|12)/)){
+        const m = raw.match(/(lớp\s*\d+|grade\s*\d+)/);
+        audience = (m? m[0] : 'lớp 11') + ', môn Tiếng Anh tại Việt Nam';
+      } else if(raw.includes('mầm non') || raw.includes('preschool')){
+        audience = 'Trẻ mầm non (4–5 tuổi)';
+      } else {
+        audience = 'Học sinh THPT, môn Tiếng Anh tại Việt Nam';
+      }
+
+      // Goal/topic
+      if(raw.includes('unit')) goal = raw.replace(/.*(unit\s*\d+).*/i,'$1').toUpperCase();
+      if(!goal) goal = 'ôn tập chủ đề đã học';
+
+      // Tasks
+      const num = raw.match(/(\d+)[\s-]*(câu|items|questions)/);
+      const n = num? num[1] : '10';
+      const hasDrag = /kéo\s*thả|drag/.test(raw);
+      const hasMCQ = /trắc\s*nghiệm|mcq|multiple/.test(raw);
+      tasks = `${hasMCQ? 'Trắc nghiệm':''}${hasMCQ&&hasDrag? ' + ':''}${hasDrag? 'Kéo thả':''}`.trim() || 'Trắc nghiệm';
+      tasks += ` ${n} câu`;
+
+      // Fill fields
+      el('goal').value = capitalizeVN(`Ôn tập ${goal}, luyện từ vựng & ngữ pháp, nhận diện collocations`);
+      el('audience').value = audience;
+      el('tasks').value = tasks + '; thêm 2 nhiệm vụ sắp xếp thứ tự';
+      el('style').value = 'Đơn giản, thân thiện; màu vàng & xanh da trời';
+      el('extras').value = 'Thanh tiến độ, điểm số, hiệu ứng đúng/sai, trang chào mừng';
+
+      // Auto-generate
+      generate();
+    }
+
+    function capitalizeVN(s){
+      return s.replace(/(^|\.\s+|\n)([a-zà-ỹ])/g, (m,p,a)=> p + a.toUpperCase());
+    }
+
+    function persist(){
+      const data = ['goal','audience','tasks','style','extras','outVN','outEN'].reduce((o,k)=> (o[k]=el(k).value,o),{});
+      localStorage.setItem('canvaGen', JSON.stringify(data));
+    }
+
+    (function restore(){
+      const raw = localStorage.getItem('canvaGen');
+      if(!raw) return;
+      try{ const data = JSON.parse(raw); Object.keys(data).forEach(k=> { if(el(k)) el(k).value = data[k]; }); }catch(e){}
+    })();
+  </script>
+</body>
+</html>
