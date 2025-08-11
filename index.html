@@ -207,7 +207,7 @@
 
       // Display language note
       const uiLangFull = el('uiLang')?.value || 'English – Tiếng Anh';
-      const uiLangEn = uiLangFull.split(' – ')[0]; // phần tiếng Anh trước dấu " – "
+      const uiLangEn = uiLangFull.split(' – ')[0];
       const langNoteVI = `Ngôn ngữ hiển thị: ${uiLangFull}.`;
       const langNoteEN = `Use ${uiLangEn} for all on-screen text and UI labels.`;
 
@@ -223,7 +223,7 @@ Hiệu ứng: Đúng → đổi màu, âm “chime/pop”, pháo giấy; Sai →
 Ghi chú thêm: ${extras}.
 ${langNoteVI}`;
 
-      // EN output: prefer EN fields if provided
+      // EN output (prefer EN fields if provided)
       const goalEN     = sanitize(el('goalEN')?.value)     || goal;
       const audienceEN = sanitize(el('audienceEN')?.value) || audience;
       const tasksEN    = sanitize(el('tasksEN')?.value)    || tasks;
@@ -245,16 +245,43 @@ ${langNoteEN}`;
       el('outEN').value = en;
     }
 
+    // Copy with robust fallbacks (for iframe/Google Sites)
     function copyText(id, btnEl){
-      const text = el(id).value;
+      const ta = document.getElementById(id);
+      const text = ta ? ta.value : '';
       if(!text){ alert('Không có nội dung để sao chép / Nothing to copy'); return; }
-      navigator.clipboard.writeText(text).then(()=>{
+
+      const flash = (msg) => {
         if(btnEl){
           const original = btnEl.textContent;
-          btnEl.textContent = (id==='outVN' ? 'Đã sao chép!' : 'Copied!');
+          btnEl.textContent = msg;
           setTimeout(()=> btnEl.textContent = original, 1200);
         }
-      });
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+          .then(()=> flash(id==='outVN' ? 'Đã sao chép!' : 'Copied!'))
+          .catch(()=> fallbackCopy());
+      } else {
+        fallbackCopy();
+      }
+
+      function fallbackCopy(){
+        try{
+          ta.focus();
+          ta.select();
+          if(ta.setSelectionRange){ ta.setSelectionRange(0, ta.value.length); }
+          const ok = document.execCommand('copy');
+          if(ok){
+            flash(id==='outVN' ? 'Đã sao chép!' : 'Copied!');
+          } else {
+            alert('Trình duyệt đang chặn sao chép tự động. Nội dung đã được bôi đen — hãy nhấn Ctrl/Cmd + C để sao chép.');
+          }
+        }catch(e){
+          alert('Trình duyệt đang chặn sao chép tự động. Nội dung đã được bôi đen — hãy nhấn Ctrl/Cmd + C để sao chép.');
+        }
+      }
     }
 
     function clearAll(){
@@ -262,7 +289,6 @@ ${langNoteEN}`;
        'goalEN','audienceEN','tasksEN','styleEN','extrasEN',
        'outVN','outEN']
         .forEach(i=> { const x = el(i); if(x) x.value=''; });
-      // reset dropdown to default (VN)
       if(el('uiLang')) el('uiLang').value = 'Vietnamese – Tiếng Việt';
     }
   </script>
