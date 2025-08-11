@@ -7,10 +7,7 @@
   <meta name="description" content="Generate bilingual (VN/EN) prompts for Canva 'Code for Me' to build interactive classroom games. Kid-friendly UI, copy-ready outputs.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
   <style>
-    :root{
-      --bg:#f9fbff; --card:#fff; --primary:#2b7de9; --accent:#f7c948;
-      --text:#203040; --muted:#6b7a90; --ring:#9ec4ff;
-    }
+    :root{ --bg:#f9fbff; --card:#fff; --primary:#2b7de9; --accent:#f7c948; --text:#203040; --muted:#6b7a90; --ring:#9ec4ff; }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -89,6 +86,33 @@
           </div>
         </div>
 
+        <!-- Display language -->
+        <div class="row" style="margin-top:8px">
+          <div style="max-width:260px">
+            <label for="uiLang">Ngôn ngữ hiển thị · Display language</label>
+            <select id="uiLang" style="max-width:250px;">
+              <option>English – Tiếng Anh</option>
+              <option selected>Vietnamese – Tiếng Việt</option>
+              <option>Chinese (Simplified) – Tiếng Trung (Giản thể)</option>
+              <option>Chinese (Traditional) – Tiếng Trung (Phồn thể)</option>
+              <option>Japanese – Tiếng Nhật</option>
+              <option>Korean – Tiếng Hàn</option>
+              <option>Hindi – Tiếng Hindi</option>
+              <option>Spanish – Tiếng Tây Ban Nha</option>
+              <option>French – Tiếng Pháp</option>
+              <option>German – Tiếng Đức</option>
+              <option>Portuguese – Tiếng Bồ Đào Nha</option>
+              <option>Italian – Tiếng Ý</option>
+              <option>Russian – Tiếng Nga</option>
+              <option>Arabic – Tiếng Ả Rập</option>
+              <option>Thai – Tiếng Thái</option>
+              <option>Malay – Tiếng Mã Lai</option>
+              <option>Indonesian – Tiếng Indonesia</option>
+              <option>Turkish – Tiếng Thổ Nhĩ Kỳ</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Optional EN overrides -->
         <div class="card" style="margin-top:12px;background:#fffbeb">
           <h2 style="margin-top:0">Tùy chọn: Ô tiếng Anh · Optional EN fields</h2>
@@ -163,9 +187,10 @@
     // Always fresh on load (no storage)
     (function resetOnLoad(){
       ['goal','audience','tasks','style','extras',
+       'uiLang',
        'goalEN','audienceEN','tasksEN','styleEN','extrasEN',
        'outVN','outEN']
-        .forEach(id => { const x = el(id); if (x) x.value = ''; });
+        .forEach(id => { const x = el(id); if (x && 'value' in x) x.value = x.tagName==='SELECT' ? x.value : ''; });
     })();
 
     function generate(){
@@ -180,6 +205,12 @@
         return;
       }
 
+      // Display language note
+      const uiLangFull = el('uiLang')?.value || 'English – Tiếng Anh';
+      const uiLangEn = uiLangFull.split(' – ')[0]; // phần tiếng Anh trước dấu " – "
+      const langNoteVI = `Ngôn ngữ hiển thị: ${uiLangFull}.`;
+      const langNoteEN = `Use ${uiLangEn} for all on-screen text and UI labels.`;
+
       // VI output
       const vn = `Tạo một trò chơi tương tác về ${goal}.
 Mục tiêu: Giúp người chơi đạt được ${goal.replace(/(^|;|,)/g,'$1 ').trim()}.
@@ -189,7 +220,8 @@ Phong cách: ${style}.
 Triển khai hội thoại từng bước: 1) Lời chào + giới thiệu luật chơi; 2) Câu hỏi/mini-game xuất hiện lần lượt; 3) Tổng kết điểm + lời chúc mừng.
 Hiệu ứng: Đúng → đổi màu, âm “chime/pop”, pháo giấy; Sai → lắc nhẹ, âm “boing/buzz”, lời khích lệ.
 Điều hướng: Nút “Tiếp theo” sau mỗi câu; có thanh tiến độ, bộ đếm câu đúng, hệ thống tính điểm tổng kết.
-Ghi chú thêm: ${extras}.`;
+Ghi chú thêm: ${extras}.
+${langNoteVI}`;
 
       // EN output: prefer EN fields if provided
       const goalEN     = sanitize(el('goalEN')?.value)     || goal;
@@ -206,7 +238,8 @@ Style: ${styleEN}.
 Step-by-step dialogue flow: (1) Warm greeting + rules; (2) Questions/minigames appear round by round; (3) Score summary + congratulations.
 Effects: Correct → color change, gentle "chime/pop", confetti; Incorrect → slight shake, "boing/buzz", encouraging retry.
 Navigation: "Next" after each question, progress bar, correct-answer counter, final scoreboard.
-Extras: ${extrasEN}.`;
+Extras: ${extrasEN}.
+${langNoteEN}`;
 
       el('outVN').value = vn;
       el('outEN').value = en;
@@ -229,6 +262,8 @@ Extras: ${extrasEN}.`;
        'goalEN','audienceEN','tasksEN','styleEN','extrasEN',
        'outVN','outEN']
         .forEach(i=> { const x = el(i); if(x) x.value=''; });
+      // reset dropdown to default (VN)
+      if(el('uiLang')) el('uiLang').value = 'Vietnamese – Tiếng Việt';
     }
   </script>
 </body>
