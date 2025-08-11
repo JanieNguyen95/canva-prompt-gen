@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Canva Prompt Generator for Interactive Classroom Games | VN/EN</title>
-  <meta name="description" content="Generate bilingual (VN/EN) prompts for Canva 'Code for Me' to build interactive classroom games. Kid-friendly UI, auto-suggestions, copy-ready outputs.">
+  <meta name="description" content="Generate bilingual (VN/EN) prompts for Canva 'Code for Me' to build interactive classroom games. Kid-friendly UI, copy-ready outputs.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
   <style>
     :root{
@@ -28,7 +28,7 @@
     h1{font-size:clamp(1.4rem,1rem + 1.5vw,2rem);margin:0}
     .subtitle{color:var(--muted)}
     .grid{display:grid;grid-template-columns:1fr;gap:18px}
-    @media (min-width:900px){.grid{grid-template-columns:1.1fr 0.9fr}}
+    @media (min-width:900px){.grid{grid-template-columns: 1.1fr 0.9fr}}
     .card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(43,125,233,.08),0 2px 6px rgba(32,48,64,.06)}
     .card h2{margin:0 0 8px 0;font-size:1.05rem}
     .help{font-size:.9rem;color:var(--muted)}
@@ -71,13 +71,13 @@
         <div class="help">Điền ngắn gọn, rõ ý. Write concise, clear notes.</div>
 
         <label for="goal">Nội dung / Mục tiêu · Topic / Learning goals</label>
-        <textarea id="goal" placeholder="VD/eg: Game học màu sắc; nhận biết đỏ, xanh, vàng; phân biệt đồ vật theo màu."></textarea>
+        <textarea id="goal" placeholder="VD/eg: Game học màu sắc; nhận biết đỏ, xanh, vàng; hoặc vòng đời con ong; chu trình nước…"></textarea>
 
         <label for="audience">Đối tượng / Môn học · Audience / Subject</label>
-        <textarea id="audience" placeholder="VD/eg: Trẻ mầm non (4–5 tuổi) tại Việt Nam."></textarea>
+        <textarea id="audience" placeholder="VD/eg: Trẻ mầm non (4–5 tuổi) tại Việt Nam; hoặc HS tiểu học lớp 3…"></textarea>
 
         <label for="tasks">Nhiệm vụ / Số câu / Dạng câu · Tasks / Item count / Formats</label>
-        <textarea id="tasks" placeholder="VD/eg: Kéo thả ghép màu với đồ vật (6 cặp); 5 câu trắc nghiệm đơn giản; 1 trò chơi tìm màu."></textarea>
+        <textarea id="tasks" placeholder="VD/eg: Kéo thả 6 cặp; Trắc nghiệm 8 câu; 1 nhiệm vụ sắp xếp thứ tự…"></textarea>
 
         <div class="row">
           <div>
@@ -94,19 +94,11 @@
           <button class="btn primary" onclick="generate()">Tạo Prompt · Generate</button>
           <button class="btn ghost" onclick="clearAll()">Xóa nội dung · Clear</button>
         </div>
-
-        <hr style="margin:18px 0;border:none;height:1px;background:#ecf2ff"/>
-        <h2>2) Trợ lý gợi ý tự động · Auto-suggestion assistant</h2>
-        <div class="help">Gõ 1 câu mô tả ngắn, hệ thống sẽ đề xuất & điền vào các ô trên. Type a short idea and let the assistant fill the fields.</div>
-        <textarea id="lazy" placeholder="VD/eg: Game cho bé mầm non, học màu sắc, kéo thả + trắc nghiệm, 5 câu."></textarea>
-        <div class="row" style="margin-top:8px">
-          <button class="btn accent" onclick="autosuggest()">Phân tích & điền · Analyze & Fill</button>
-        </div>
       </section>
 
       <!-- Outputs -->
       <section class="card" id="outputs">
-        <h2>3) Prompt hoàn chỉnh · Final prompt</h2>
+        <h2>2) Prompt hoàn chỉnh · Final prompt</h2>
         <div class="help">Sao chép và dán vào Canva (Code for Me). Copy to Canva.</div>
 
         <div class="outputs">
@@ -145,7 +137,7 @@
 
     // always fresh on load (no storage)
     (function resetOnLoad(){
-      ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
+      ['goal','audience','tasks','style','extras','outVN','outEN']
         .forEach(id => { const x = document.getElementById(id); if (x) x.value = ''; });
     })();
 
@@ -196,125 +188,8 @@ Extras: ${extras}.`;
     }
 
     function clearAll(){
-      ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
+      ['goal','audience','tasks','style','extras','outVN','outEN']
         .forEach(i=> { const x = el(i); if(x) x.value=''; });
-    }
-
-    // ===== AUTOSUGGEST (offline) — ưu tiên chủ đề khoa học, có water cycle =====
-    function autosuggest(){
-      const raw = sanitize(el('lazy').value);
-      if(!raw){ alert('Nhập ý tưởng ngắn để gợi ý tự động. / Enter a short idea.'); return; }
-      const text = raw.toLowerCase();
-
-      // Audience (default: preschool)
-      let audienceKey = 'mầm non';
-      if(/tiểu\s*học|lớp\s*[1-5]|grade\s*[1-5]/.test(text)) audienceKey = 'tiểu học';
-      else if(/lớp\s*1[0-2]|grade\s*(10|11|12)|thpt/.test(text)) audienceKey = 'thpt';
-
-      const templates = {
-        'mầm non': {
-          audience: 'Trẻ mầm non (4–5 tuổi) tại Việt Nam',
-          extras: 'Nhân vật hoạt hình dễ thương, thanh tiến độ, điểm số, hiệu ứng pháo giấy',
-          styleList: [
-            'Đơn giản, vui nhộn; màu vàng & xanh da trời',
-            'Màu hồng kẹo + xanh bạc hà, phong cách hoạt hình',
-            'Sắc màu cầu vồng, biểu tượng đám mây & giọt nước'
-          ],
-          defaultCount: 5
-        },
-        'tiểu học': {
-          audience: 'Học sinh tiểu học tại Việt Nam',
-          extras: 'Hình minh họa sinh động, thanh tiến độ, hiệu ứng đúng/sai',
-          styleList: ['Tươi sáng, xanh lá + cam','Xanh biển + vàng chanh','Truyện tranh, pastel'],
-          defaultCount: 8
-        },
-        'thpt': {
-          audience: 'Học sinh THPT, môn Tiếng Anh tại Việt Nam',
-          extras: 'Thanh tiến độ, điểm số, câu hỏi nâng cao',
-          styleList: ['Hiện đại, xanh navy + xám bạc','Tối giản, đen + xanh ngọc','Xanh dương + cam'],
-          defaultCount: 10
-        }
-      };
-      const chosen = templates[audienceKey];
-
-      // Strong topics (science-first)
-      const TOPICS = [
-        {
-          re: /(vòng\s*tuần\s*hoàn\s*(của)?\s*nước|chu\s*trình\s*nước|water\s*cycle)/i,
-          goal: 'vòng tuần hoàn của nước: bay hơi → ngưng tụ → mưa → thu gom',
-          styleHint: 'Nền bầu trời xanh, mây trắng; biểu tượng mặt trời – đám mây – giọt mưa',
-          makeTasks: (n, hasMCQ, hasDrag) => {
-            const parts = [];
-            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu (nhận biết giai đoạn: bay hơi, ngưng tụ, mưa, thu gom)`);
-            if(hasDrag) parts.push('Kéo thả ghép biểu tượng (mặt trời–bay hơi, đám mây–ngưng tụ, giọt mưa–mưa)');
-            parts.push('1 nhiệm vụ sắp xếp đúng thứ tự các giai đoạn');
-            return parts.join('; ');
-          }
-        },
-        {
-          re: /(thời\s*tiết|weather)/i,
-          goal: 'các trạng thái thời tiết cơ bản: nắng, mưa, nhiều mây, gió',
-          styleHint: 'Biểu tượng thời tiết lớn, màu sắc tươi',
-          makeTasks: (n, hasMCQ, hasDrag) => {
-            const parts = [];
-            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu (chọn biểu tượng phù hợp)`);
-            if(hasDrag) parts.push('Kéo thả ghép từ với hình thời tiết');
-            return parts.join('; ') || `Trắc nghiệm ${n} câu`;
-          }
-        },
-        {
-          re: /(thực\s*vật|plants?|cây\s*cối)/i,
-          goal: 'vòng đời đơn giản của cây: hạt → mầm → cây con → cây trưởng thành',
-          styleHint: 'Màu xanh lá chủ đạo, icon lá và chậu cây',
-          makeTasks: (n, hasMCQ, hasDrag) => {
-            const parts = [];
-            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu`);
-            parts.push('1 nhiệm vụ sắp xếp thứ tự vòng đời');
-            if(hasDrag) parts.push('Kéo thả ghép bộ phận cây với tên gọi');
-            return parts.join('; ');
-          }
-        }
-      ];
-
-      const numMatch = text.match(/(\d+)\s*(câu|questions|items)/);
-      const n = numMatch ? parseInt(numMatch[1],10) : chosen.defaultCount;
-      const hasDrag = /kéo\s*thả|drag/.test(text);
-      const hasMCQ = /trắc\s*nghiệm|mcq|multiple/.test(text);
-
-      let topic = TOPICS.find(t => t.re.test(text));
-      let goal, tasks, style;
-
-      if(topic){
-        goal  = topic.goal;
-        tasks = topic.makeTasks(n, hasMCQ || !hasDrag, hasDrag || !hasMCQ);
-        const stylePick = chosen.styleList[Math.floor(Math.random()*chosen.styleList.length)];
-        style = `${stylePick}; ${topic.styleHint}`;
-      } else {
-        // fallback: still sensible but neutral
-        if(/màu|color/.test(text))       goal = 'học màu sắc cơ bản; nhận biết đỏ, xanh, vàng';
-        else if(/hình|shape/.test(text)) goal = 'nhận biết hình dạng: tròn, vuông, tam giác';
-        else if(/toán|math/.test(text))  goal = 'toán tư duy đơn giản; đếm số và so sánh lớn–bé';
-        else if(/tiếng\s*anh|english/.test(text)) goal = 'từ vựng đơn giản theo chủ đề quen thuộc';
-        else goal = 'chủ đề khoa học – đời sống phù hợp lứa tuổi';
-
-        let base = `${hasDrag? 'Kéo thả':''}${hasDrag&&hasMCQ? ' + ':''}${hasMCQ? 'Trắc nghiệm':''}`.trim();
-        if(!base) base = (audienceKey==='mầm non') ? 'Kéo thả' : 'Trắc nghiệm';
-        tasks = `${base} ${n} câu`;
-        if(audienceKey==='mầm non' && !/sắp\s*xếp|order/.test(text)) tasks += '; 1 trò chơi tìm nhanh';
-        style = chosen.styleList[Math.floor(Math.random()*chosen.styleList.length)];
-      }
-
-      el('goal').value = capitalizeVN(`Trò chơi về ${goal}`);
-      el('audience').value = chosen.audience;
-      el('tasks').value = tasks;
-      el('style').value = style;
-      el('extras').value = chosen.extras;
-
-      generate();
-    }
-
-    function capitalizeVN(s){
-      return s.replace(/(^|\.\s+|\n)([a-zà-ỹ])/g, (m,p,a)=> p + a.toUpperCase());
     }
   </script>
 </body>
