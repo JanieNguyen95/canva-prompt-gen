@@ -141,9 +141,9 @@
   <script>
     // === Helpers ===
     const el = id => document.getElementById(id);
-    function sanitize(s){ return (s||"").trim(); }
+    const sanitize = s => (s||"").trim();
 
-    // === Always fresh on load (no persistence) ===
+    // always fresh on load (no storage)
     (function resetOnLoad(){
       ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
         .forEach(id => { const x = document.getElementById(id); if (x) x.value = ''; });
@@ -183,7 +183,6 @@ Extras: ${extras}.`;
 
       el('outVN').value = vn;
       el('outEN').value = en;
-      // no persist();  // always fresh
     }
 
     function copyText(id){
@@ -199,6 +198,119 @@ Extras: ${extras}.`;
     function clearAll(){
       ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
         .forEach(i=> { const x = el(i); if(x) x.value=''; });
+    }
+
+    // ===== AUTOSUGGEST (offline) — ưu tiên chủ đề khoa học, có water cycle =====
+    function autosuggest(){
+      const raw = sanitize(el('lazy').value);
+      if(!raw){ alert('Nhập ý tưởng ngắn để gợi ý tự động. / Enter a short idea.'); return; }
+      const text = raw.toLowerCase();
+
+      // Audience (default: preschool)
+      let audienceKey = 'mầm non';
+      if(/tiểu\s*học|lớp\s*[1-5]|grade\s*[1-5]/.test(text)) audienceKey = 'tiểu học';
+      else if(/lớp\s*1[0-2]|grade\s*(10|11|12)|thpt/.test(text)) audienceKey = 'thpt';
+
+      const templates = {
+        'mầm non': {
+          audience: 'Trẻ mầm non (4–5 tuổi) tại Việt Nam',
+          extras: 'Nhân vật hoạt hình dễ thương, thanh tiến độ, điểm số, hiệu ứng pháo giấy',
+          styleList: [
+            'Đơn giản, vui nhộn; màu vàng & xanh da trời',
+            'Màu hồng kẹo + xanh bạc hà, phong cách hoạt hình',
+            'Sắc màu cầu vồng, biểu tượng đám mây & giọt nước'
+          ],
+          defaultCount: 5
+        },
+        'tiểu học': {
+          audience: 'Học sinh tiểu học tại Việt Nam',
+          extras: 'Hình minh họa sinh động, thanh tiến độ, hiệu ứng đúng/sai',
+          styleList: ['Tươi sáng, xanh lá + cam','Xanh biển + vàng chanh','Truyện tranh, pastel'],
+          defaultCount: 8
+        },
+        'thpt': {
+          audience: 'Học sinh THPT, môn Tiếng Anh tại Việt Nam',
+          extras: 'Thanh tiến độ, điểm số, câu hỏi nâng cao',
+          styleList: ['Hiện đại, xanh navy + xám bạc','Tối giản, đen + xanh ngọc','Xanh dương + cam'],
+          defaultCount: 10
+        }
+      };
+      const chosen = templates[audienceKey];
+
+      // Strong topics (science-first)
+      const TOPICS = [
+        {
+          re: /(vòng\s*tuần\s*hoàn\s*(của)?\s*nước|chu\s*trình\s*nước|water\s*cycle)/i,
+          goal: 'vòng tuần hoàn của nước: bay hơi → ngưng tụ → mưa → thu gom',
+          styleHint: 'Nền bầu trời xanh, mây trắng; biểu tượng mặt trời – đám mây – giọt mưa',
+          makeTasks: (n, hasMCQ, hasDrag) => {
+            const parts = [];
+            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu (nhận biết giai đoạn: bay hơi, ngưng tụ, mưa, thu gom)`);
+            if(hasDrag) parts.push('Kéo thả ghép biểu tượng (mặt trời–bay hơi, đám mây–ngưng tụ, giọt mưa–mưa)');
+            parts.push('1 nhiệm vụ sắp xếp đúng thứ tự các giai đoạn');
+            return parts.join('; ');
+          }
+        },
+        {
+          re: /(thời\s*tiết|weather)/i,
+          goal: 'các trạng thái thời tiết cơ bản: nắng, mưa, nhiều mây, gió',
+          styleHint: 'Biểu tượng thời tiết lớn, màu sắc tươi',
+          makeTasks: (n, hasMCQ, hasDrag) => {
+            const parts = [];
+            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu (chọn biểu tượng phù hợp)`);
+            if(hasDrag) parts.push('Kéo thả ghép từ với hình thời tiết');
+            return parts.join('; ') || `Trắc nghiệm ${n} câu`;
+          }
+        },
+        {
+          re: /(thực\s*vật|plants?|cây\s*cối)/i,
+          goal: 'vòng đời đơn giản của cây: hạt → mầm → cây con → cây trưởng thành',
+          styleHint: 'Màu xanh lá chủ đạo, icon lá và chậu cây',
+          makeTasks: (n, hasMCQ, hasDrag) => {
+            const parts = [];
+            if(hasMCQ) parts.push(`Trắc nghiệm ${n} câu`);
+            parts.push('1 nhiệm vụ sắp xếp thứ tự vòng đời');
+            if(hasDrag) parts.push('Kéo thả ghép bộ phận cây với tên gọi');
+            return parts.join('; ');
+          }
+        }
+      ];
+
+      const numMatch = text.match(/(\d+)\s*(câu|questions|items)/);
+      const n = numMatch ? parseInt(numMatch[1],10) : chosen.defaultCount;
+      const hasDrag = /kéo\s*thả|drag/.test(text);
+      const hasMCQ = /trắc\s*nghiệm|mcq|multiple/.test(text);
+
+      let topic = TOPICS.find(t => t.re.test(text));
+      let goal, tasks, style;
+
+      if(topic){
+        goal  = topic.goal;
+        tasks = topic.makeTasks(n, hasMCQ || !hasDrag, hasDrag || !hasMCQ);
+        const stylePick = chosen.styleList[Math.floor(Math.random()*chosen.styleList.length)];
+        style = `${stylePick}; ${topic.styleHint}`;
+      } else {
+        // fallback: still sensible but neutral
+        if(/màu|color/.test(text))       goal = 'học màu sắc cơ bản; nhận biết đỏ, xanh, vàng';
+        else if(/hình|shape/.test(text)) goal = 'nhận biết hình dạng: tròn, vuông, tam giác';
+        else if(/toán|math/.test(text))  goal = 'toán tư duy đơn giản; đếm số và so sánh lớn–bé';
+        else if(/tiếng\s*anh|english/.test(text)) goal = 'từ vựng đơn giản theo chủ đề quen thuộc';
+        else goal = 'chủ đề khoa học – đời sống phù hợp lứa tuổi';
+
+        let base = `${hasDrag? 'Kéo thả':''}${hasDrag&&hasMCQ? ' + ':''}${hasMCQ? 'Trắc nghiệm':''}`.trim();
+        if(!base) base = (audienceKey==='mầm non') ? 'Kéo thả' : 'Trắc nghiệm';
+        tasks = `${base} ${n} câu`;
+        if(audienceKey==='mầm non' && !/sắp\s*xếp|order/.test(text)) tasks += '; 1 trò chơi tìm nhanh';
+        style = chosen.styleList[Math.floor(Math.random()*chosen.styleList.length)];
+      }
+
+      el('goal').value = capitalizeVN(`Trò chơi về ${goal}`);
+      el('audience').value = chosen.audience;
+      el('tasks').value = tasks;
+      el('style').value = style;
+      el('extras').value = chosen.extras;
+
+      generate();
     }
 
     function capitalizeVN(s){
