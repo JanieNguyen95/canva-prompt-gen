@@ -1,4 +1,3 @@
-<!-- version: 2025-08-11-22h -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -9,64 +8,47 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
   <style>
     :root{
-      --bg: #f9fbff;
-      --card:#ffffff;
-      --primary:#2b7de9; /* sky blue */
-      --accent:#f7c948;  /* warm yellow */
-      --text:#203040;
-      --muted:#6b7a90;
-      --ring:#9ec4ff;
+      --bg:#f9fbff; --card:#fff; --primary:#2b7de9; --accent:#f7c948;
+      --text:#203040; --muted:#6b7a90; --ring:#9ec4ff;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; background:linear-gradient(180deg,var(--bg),#fff);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
     }
     .container{max-width:1100px;margin:0 auto;padding:24px}
     header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
     .logo{
-      width:44px;height:44px;border-radius:12px;
-      background: radial-gradient(circle at 30% 30%, var(--accent), #ffeaa7);
-      box-shadow: 0 6px 18px rgba(247,201,72,.35), inset 0 0 0 2px rgba(255,255,255,.6);
-      display:grid;place-items:center;font-weight:800;color:#7b5600
+      width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#7b5600;
+      background:radial-gradient(circle at 30% 30%,var(--accent),#ffeaa7);
+      box-shadow:0 6px 18px rgba(247,201,72,.35), inset 0 0 0 2px rgba(255,255,255,.6);
     }
-    h1{font-size: clamp(1.4rem, 1rem + 1.5vw, 2rem);margin:0}
+    h1{font-size:clamp(1.4rem,1rem + 1.5vw,2rem);margin:0}
     .subtitle{color:var(--muted)}
-
     .grid{display:grid;grid-template-columns:1fr;gap:18px}
-    @media (min-width: 900px){
-      .grid{grid-template-columns: 1.1fr 0.9fr}
-    }
-
-    .card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(43,125,233,.08), 0 2px 6px rgba(32,48,64,.06);}
+    @media (min-width:900px){.grid{grid-template-columns:1.1fr 0.9fr}}
+    .card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(43,125,233,.08),0 2px 6px rgba(32,48,64,.06)}
     .card h2{margin:0 0 8px 0;font-size:1.05rem}
     .help{font-size:.9rem;color:var(--muted)}
-
     label{font-weight:600;display:block;margin-top:12px;margin-bottom:6px}
-    input[type="text"], textarea, select{
+    input[type="text"],textarea,select{
       width:100%;padding:12px 14px;border:1.5px solid #e6eefc;border-radius:12px;outline:none;background:#fbfdff;
-      transition:border .15s, box-shadow .15s;
+      transition:border .15s,box-shadow .15s;
     }
     textarea{min-height:120px;resize:vertical}
-    input:focus, textarea:focus, select:focus{border-color:var(--primary); box-shadow:0 0 0 4px var(--ring)}
-
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .row > *{flex:1}
-
+    input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--ring)}
+    .row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1}
     .btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}
     .btn.primary{background:var(--primary);color:#fff;box-shadow:0 8px 20px rgba(43,125,233,.28)}
     .btn.ghost{background:#eef5ff;color:#174ea6}
     .btn.accent{background:var(--accent);color:#4d3b00}
     .btn:active{transform:translateY(1px)}
-
     .outputs{display:grid;grid-template-columns:1fr;gap:14px}
-    @media (min-width: 800px){.outputs{grid-template-columns:1fr 1fr}}
-
+    @media (min-width:800px){.outputs{grid-template-columns:1fr 1fr}}
     .outbox{position:relative}
     .copy{position:absolute;right:10px;top:10px;display:flex;gap:8px}
-
     .badge{display:inline-flex;align-items:center;gap:8px;background:#eef7ff;color:#174ea6;padding:6px 10px;border-radius:999px;font-size:.85rem;font-weight:700}
     footer{margin-top:24px;color:var(--muted);font-size:.9rem}
     .tiny{font-size:.86rem;color:#5b6a82}
@@ -89,7 +71,7 @@
         <div class="help">Điền ngắn gọn, rõ ý. Write concise, clear notes.</div>
 
         <label for="goal">Nội dung / Mục tiêu · Topic / Learning goals</label>
-        <textarea id="goal" placeholder="VD/eg: Game học màu sắc đơn giản; nhận biết màu đỏ, xanh, vàng; phân biệt đồ vật theo màu."></textarea>
+        <textarea id="goal" placeholder="VD/eg: Game học màu sắc; nhận biết đỏ, xanh, vàng; phân biệt đồ vật theo màu."></textarea>
 
         <label for="audience">Đối tượng / Môn học · Audience / Subject</label>
         <textarea id="audience" placeholder="VD/eg: Trẻ mầm non (4–5 tuổi) tại Việt Nam."></textarea>
@@ -113,7 +95,7 @@
           <button class="btn ghost" onclick="clearAll()">Xóa nội dung · Clear</button>
         </div>
 
-        <hr style="margin:18px 0; border:none; height:1px; background:#ecf2ff"/>
+        <hr style="margin:18px 0;border:none;height:1px;background:#ecf2ff"/>
         <h2>2) Trợ lý gợi ý tự động · Auto-suggestion assistant</h2>
         <div class="help">Gõ 1 câu mô tả ngắn, hệ thống sẽ đề xuất & điền vào các ô trên. Type a short idea and let the assistant fill the fields.</div>
         <textarea id="lazy" placeholder="VD/eg: Game cho bé mầm non, học màu sắc, kéo thả + trắc nghiệm, 5 câu."></textarea>
@@ -157,9 +139,15 @@
   </div>
 
   <script>
-    // Helpers
+    // === Helpers ===
     const el = id => document.getElementById(id);
     function sanitize(s){ return (s||"").trim(); }
+
+    // === Always fresh on load (no persistence) ===
+    (function resetOnLoad(){
+      ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
+        .forEach(id => { const x = document.getElementById(id); if (x) x.value = ''; });
+    })();
 
     function generate(){
       const goal = sanitize(el('goal').value);
@@ -178,7 +166,7 @@ Mục tiêu: Giúp người chơi đạt được ${goal.replace(/(^|;|,)/g,'$1 
 Đối tượng: ${audience}.
 Hình thức: ${tasks}.
 Phong cách: ${style}.
-Triển khai hội thoại từng bước: 1) Lời chào + giới thiệu luật chơi; 2) Câu hỏi xuất hiện lần lượt theo vòng; 3) Tổng kết điểm + lời chúc mừng.
+Triển khai hội thoại từng bước: 1) Lời chào + giới thiệu luật chơi; 2) Câu hỏi/mini-game xuất hiện lần lượt; 3) Tổng kết điểm + lời chúc mừng.
 Hiệu ứng: Đúng → đổi màu, âm “chime/pop”, pháo giấy; Sai → lắc nhẹ, âm “boing/buzz”, lời khích lệ.
 Điều hướng: Nút “Tiếp theo” sau mỗi câu; có thanh tiến độ, bộ đếm câu đúng, hệ thống tính điểm tổng kết.
 Ghi chú thêm: ${extras}.`;
@@ -188,14 +176,14 @@ Goal: Help players master ${goal}.
 Audience: ${audience}.
 Format: ${tasks}.
 Style: ${style}.
-Step-by-step dialogue flow: (1) Warm greeting + rules; (2) Questions appear round by round; (3) Score summary + congratulations.
+Step-by-step dialogue flow: (1) Warm greeting + rules; (2) Questions/minigames appear round by round; (3) Score summary + congratulations.
 Effects: Correct → color change, gentle "chime/pop", confetti; Incorrect → slight shake, "boing/buzz", encouraging retry.
-Navigation: "Next" button after each question, progress bar, correct-answer counter, final scoreboard.
+Navigation: "Next" after each question, progress bar, correct-answer counter, final scoreboard.
 Extras: ${extras}.`;
 
       el('outVN').value = vn;
       el('outEN').value = en;
-      persist();
+      // no persist();  // always fresh
     }
 
     function copyText(id){
@@ -209,16 +197,15 @@ Extras: ${extras}.`;
     }
 
     function clearAll(){
-      ['goal','audience','tasks','style','extras','lazy','outVN','outEN'].forEach(i=> el(i).value='');
-      localStorage.removeItem('canvaGen');
+      ['goal','audience','tasks','style','extras','lazy','outVN','outEN']
+        .forEach(i=> { const x = el(i); if(x) x.value=''; });
     }
 
-    // ===== AUTOSUGGEST (offline, thông minh hơn) =====
+    // === Autosuggest: offline, smarter defaults ===
     function autosuggest(){
       const raw = sanitize(el('lazy').value).toLowerCase();
       if(!raw){ alert('Nhập ý tưởng ngắn để gợi ý tự động. / Enter a short idea.'); return; }
 
-      // Mẫu theo đối tượng
       const templates = {
         'mầm non': {
           audience: 'Trẻ mầm non (4–5 tuổi) tại Việt Nam',
@@ -234,9 +221,9 @@ Extras: ${extras}.`;
           audience: 'Học sinh tiểu học tại Việt Nam',
           extras: 'Hình minh họa sinh động, thanh tiến độ, hiệu ứng đúng/sai',
           styleList: [
-            'Tươi sáng, màu xanh lá + cam',
-            'Màu xanh biển + vàng chanh, icon ngộ nghĩnh',
-            'Phong cách truyện tranh, màu pastel'
+            'Tươi sáng, xanh lá + cam',
+            'Xanh biển + vàng chanh, icon ngộ nghĩnh',
+            'Truyện tranh, màu pastel'
           ],
           defaultCount: '8'
         },
@@ -244,29 +231,28 @@ Extras: ${extras}.`;
           audience: 'Học sinh THPT, môn Tiếng Anh tại Việt Nam',
           extras: 'Thanh tiến độ, điểm số, câu hỏi nâng cao',
           styleList: [
-            'Hiện đại, màu xanh navy + xám bạc',
-            'Phong cách tối giản, màu đen + xanh ngọc',
-            'Màu xanh dương + cam, icon công nghệ'
+            'Hiện đại, xanh navy + xám bạc',
+            'Tối giản, đen + xanh ngọc',
+            'Xanh dương + cam, icon công nghệ'
           ],
           defaultCount: '10'
         }
       };
 
-      // Xác định audience
-      let audienceKey = 'mầm non'; // ưu tiên mầm non làm mặc định
+      // Audience (mặc định: mầm non)
+      let audienceKey = 'mầm non';
       if(/tiểu\s*học|lớp\s*[1-5]|grade\s*[1-5]/.test(raw)) audienceKey = 'tiểu học';
       else if(/lớp\s*1[0-2]|grade\s*(10|11|12)|thpt/.test(raw)) audienceKey = 'thpt';
-
       const chosen = templates[audienceKey];
 
-      // Xác định goal/topic theo từ khóa
+      // Topic/goal
       let goal = 'các khái niệm cơ bản phù hợp lứa tuổi';
       if(/màu|color/.test(raw))  goal = 'học màu sắc cơ bản; nhận biết đỏ, xanh, vàng';
       else if(/hình|shape/.test(raw)) goal = 'nhận biết hình dạng: tròn, vuông, tam giác';
       else if(/toán|math/.test(raw))  goal = 'toán tư duy đơn giản; đếm số và so sánh lớn–bé';
       else if(/tiếng\s*anh|english/.test(raw)) goal = 'từ vựng đơn giản theo chủ đề quen thuộc';
 
-      // Dạng nhiệm vụ
+      // Tasks
       const num = raw.match(/(\d+)\s*(câu|questions|items)/);
       const n = num ? num[1] : chosen.defaultCount;
       const hasDrag = /kéo\s*thả|drag/.test(raw);
@@ -276,34 +262,21 @@ Extras: ${extras}.`;
       tasks += ` ${n} câu`;
       if(audienceKey==='mầm non' && !/tìm/.test(raw)) tasks += '; 1 trò chơi tìm nhanh';
 
-      // Chọn style ngẫu nhiên nếu chưa nhập
-      const style = chosen.styleList[Math.floor(Math.random() * chosen.styleList.length)];
+      // Style
+      const style = chosen.styleList[Math.floor(Math.random()*chosen.styleList.length)];
 
-      // Điền form
+      // Fill & generate
       el('goal').value = capitalizeVN(`Trò chơi về ${goal}`);
       el('audience').value = chosen.audience;
       el('tasks').value = tasks;
       el('style').value = style;
       el('extras').value = chosen.extras;
-
-      // Sinh prompt
       generate();
     }
 
     function capitalizeVN(s){
       return s.replace(/(^|\.\s+|\n)([a-zà-ỹ])/g, (m,p,a)=> p + a.toUpperCase());
     }
-
-    function persist(){
-      const data = ['goal','audience','tasks','style','extras','outVN','outEN'].reduce((o,k)=> (o[k]=el(k).value,o),{});
-      localStorage.setItem('canvaGen', JSON.stringify(data));
-    }
-
-    (function restore(){
-      const raw = localStorage.getItem('canvaGen');
-      if(!raw) return;
-      try{ const data = JSON.parse(raw); Object.keys(data).forEach(k=> { if(el(k)) el(k).value = data[k]; }); }catch(e){}
-    })();
   </script>
 </body>
 </html>
